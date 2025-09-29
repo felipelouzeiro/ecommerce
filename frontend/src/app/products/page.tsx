@@ -5,6 +5,7 @@ import { useAuthStore } from '@/store/authStore'
 import { useRouter } from 'next/navigation'
 import toast from 'react-hot-toast'
 import Header from '@/components/Header'
+import { getAuthToken } from '@/utils/storage'
 
 interface Product {
   id: string
@@ -36,7 +37,7 @@ export default function ProductsPage() {
     try {
       const response = await fetch('http://localhost:3001/api/products/seller/products', {
         headers: {
-          'Authorization': `Bearer ${localStorage.getItem('auth-storage') ? JSON.parse(localStorage.getItem('auth-storage')!).state.token : ''}`
+          'Authorization': `Bearer ${getAuthToken()}`
         }
       })
       const data = await response.json()
@@ -55,7 +56,7 @@ export default function ProductsPage() {
       const response = await fetch(`http://localhost:3001/api/products/${productId}`, {
         method: 'DELETE',
         headers: {
-          'Authorization': `Bearer ${localStorage.getItem('auth-storage') ? JSON.parse(localStorage.getItem('auth-storage')!).state.token : ''}`
+          'Authorization': `Bearer ${getAuthToken()}`
         }
       })
 

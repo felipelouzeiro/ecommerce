@@ -6,6 +6,7 @@ import { useAuthStore } from '@/store/authStore'
 import { useRouter } from 'next/navigation'
 import toast from 'react-hot-toast'
 import Header from '@/components/Header'
+import { getAuthToken } from '@/utils/storage'
 
 interface CartItem {
   id: string
@@ -36,7 +37,7 @@ export default function CartPage() {
     try {
       const response = await fetch('http://localhost:3001/api/cart', {
         headers: {
-          'Authorization': `Bearer ${localStorage.getItem('auth-storage') ? JSON.parse(localStorage.getItem('auth-storage')!).state.token : ''}`
+          'Authorization': `Bearer ${getAuthToken()}`
         }
       })
       
@@ -71,7 +72,7 @@ export default function CartPage() {
           method: 'POST',
           headers: {
             'Content-Type': 'application/json',
-            'Authorization': `Bearer ${localStorage.getItem('auth-storage') ? JSON.parse(localStorage.getItem('auth-storage')!).state.token : ''}`
+            'Authorization': `Bearer ${getAuthToken()}`
           },
           body: JSON.stringify({
             productId: item.product.id,
@@ -84,7 +85,7 @@ export default function CartPage() {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
-          'Authorization': `Bearer ${localStorage.getItem('auth-storage') ? JSON.parse(localStorage.getItem('auth-storage')!).state.token : ''}`
+          'Authorization': `Bearer ${getAuthToken()}`
         }
       })
 

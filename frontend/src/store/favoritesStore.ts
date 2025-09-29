@@ -16,15 +16,15 @@ interface Favorite {
 const getStorageKey = () => {
   if (typeof window === 'undefined') return 'favorites-storage'
   
-  const authStorage = localStorage.getItem('auth-storage')
-  if (authStorage) {
-    try {
+  try {
+    const authStorage = localStorage.getItem('auth-storage')
+    if (authStorage) {
       const parsed = JSON.parse(authStorage)
       const userId = parsed.state?.user?.id
       return userId ? `favorites-storage-${userId}` : 'favorites-storage'
-    } catch {
-      return 'favorites-storage'
     }
+  } catch {
+    // Ignore errors during SSR
   }
   return 'favorites-storage'
 }

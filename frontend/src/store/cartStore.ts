@@ -16,15 +16,15 @@ interface CartItem {
 const getCartStorageKey = () => {
   if (typeof window === 'undefined') return 'cart-storage'
   
-  const authStorage = localStorage.getItem('auth-storage')
-  if (authStorage) {
-    try {
+  try {
+    const authStorage = localStorage.getItem('auth-storage')
+    if (authStorage) {
       const parsed = JSON.parse(authStorage)
       const userId = parsed.state?.user?.id
       return userId ? `cart-storage-${userId}` : 'cart-storage'
-    } catch {
-      return 'cart-storage'
     }
+  } catch {
+    // Ignore errors during SSR
   }
   return 'cart-storage'
 }

@@ -5,6 +5,7 @@ import { useAuthStore } from '@/store/authStore'
 import { useRouter } from 'next/navigation'
 import toast from 'react-hot-toast'
 import Header from '@/components/Header'
+import { getAuthToken } from '@/utils/storage'
 
 export default function UploadProductsPage() {
   const { user } = useAuthStore()
@@ -38,7 +39,7 @@ export default function UploadProductsPage() {
       const response = await fetch('http://localhost:3001/api/products/upload-csv', {
         method: 'POST',
         headers: {
-          'Authorization': `Bearer ${localStorage.getItem('auth-storage') ? JSON.parse(localStorage.getItem('auth-storage')!).state.token : ''}`
+          'Authorization': `Bearer ${getAuthToken()}`
         },
         body: formData
       })
