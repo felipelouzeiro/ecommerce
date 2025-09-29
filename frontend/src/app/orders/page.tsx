@@ -1,10 +1,11 @@
 'use client'
 
+export const dynamic = 'force-dynamic'
+
 import { useState, useEffect } from 'react'
 import { useAuthStore } from '@/store/authStore'
 import { useRouter } from 'next/navigation'
 import Header from '@/components/Header'
-import { getAuthToken } from '@/utils/storage'
 
 interface OrderItem {
   id: string
@@ -43,7 +44,7 @@ export default function OrdersPage() {
     try {
       const response = await fetch('http://localhost:3001/api/orders', {
         headers: {
-          'Authorization': `Bearer ${getAuthToken()}`
+          'Authorization': `Bearer ${localStorage.getItem('auth-storage') ? JSON.parse(localStorage.getItem('auth-storage')!).state.token : ''}`
         }
       })
       
