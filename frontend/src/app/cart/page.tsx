@@ -8,6 +8,7 @@ import { useAuthStore } from '@/store/authStore'
 import { useRouter } from 'next/navigation'
 import toast from 'react-hot-toast'
 import Header from '@/components/Header'
+import { API_URL } from '@/config/api'
 
 interface CartItem {
   id: string
@@ -36,7 +37,7 @@ export default function CartPage() {
 
   const syncCartWithBackend = async () => {
     try {
-      const response = await fetch('http://localhost:3001/api/cart', {
+      const response = await fetch('${API_URL}/api/cart', {
         headers: {
           'Authorization': `Bearer ${localStorage.getItem('auth-storage') ? JSON.parse(localStorage.getItem('auth-storage')!).state.token : ''}`
         }
@@ -69,7 +70,7 @@ export default function CartPage() {
     setLoading(true)
     try {
       for (const item of items) {
-        await fetch('http://localhost:3001/api/cart/add', {
+        await fetch('${API_URL}/api/cart/add', {
           method: 'POST',
           headers: {
             'Content-Type': 'application/json',
@@ -82,7 +83,7 @@ export default function CartPage() {
         })
       }
 
-      const response = await fetch('http://localhost:3001/api/orders', {
+      const response = await fetch('${API_URL}/api/orders', {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',

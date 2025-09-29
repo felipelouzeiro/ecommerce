@@ -223,6 +223,25 @@ Produto 1,29.90,Descrição do produto 1,https://exemplo.com/img1.jpg
 ### Dashboard
 - `GET /api/dashboard/stats` - Estatísticas do vendedor
 
+## 🔧 Configuração de Ambiente
+
+### Desenvolvimento Local
+```bash
+# No diretório frontend, crie um arquivo .env.local:
+NEXT_PUBLIC_API_URL=http://localhost:3001
+```
+
+### Produção no Vercel
+1. Acesse o painel do Vercel
+2. Vá em Settings > Environment Variables
+3. Adicione:
+   - `NEXT_PUBLIC_API_URL` = `https://seu-backend.onrender.com`
+
+### Detecção Automática
+O sistema detecta automaticamente se está rodando localmente ou no Vercel:
+- **Local**: Usa `http://localhost:3001`
+- **Vercel**: Usa a URL configurada em `NEXT_PUBLIC_API_URL`
+
 ## 📚 Documentação Adicional
 
 - [API Documentation](docs/api.md)

@@ -7,6 +7,7 @@ import { useAuthStore } from '@/store/authStore'
 import { useRouter } from 'next/navigation'
 import toast from 'react-hot-toast'
 import Header from '@/components/Header'
+import { API_URL } from '@/config/api'
 
 export default function NewProductPage() {
   const { user } = useAuthStore()
@@ -24,7 +25,7 @@ export default function NewProductPage() {
     setLoading(true)
 
     try {
-      const response = await fetch('http://localhost:3001/api/products', {
+      const response = await fetch(`${API_URL}/api/products`, {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',

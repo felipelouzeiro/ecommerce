@@ -7,6 +7,7 @@ import { useRouter } from 'next/navigation'
 import Link from 'next/link'
 import { useAuthStore } from '@/store/authStore'
 import toast from 'react-hot-toast'
+import { API_URL } from '@/config/api'
 
 export default function RegisterPage() {
   const [formData, setFormData] = useState({
@@ -25,7 +26,7 @@ export default function RegisterPage() {
     setLoading(true)
 
     try {
-      const response = await fetch('http://localhost:3001/api/auth/register', {
+      const response = await fetch(`${API_URL}/api/auth/register`, {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json'
