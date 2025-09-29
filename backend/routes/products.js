@@ -65,6 +65,31 @@ router.get('/', async (req, res) => {
   }
 });
 
+// Buscar produto por ID
+router.get('/:id', async (req, res) => {
+  try {
+    const { id } = req.params;
+    
+    const product = await prisma.product.findUnique({
+      where: { id },
+      include: {
+        seller: {
+          select: { name: true }
+        }
+      }
+    });
+
+    if (!product) {
+      return res.status(404).json({ message: 'Produto não encontrado' });
+    }
+
+    res.json(product);
+  } catch (error) {
+    console.error('Erro ao buscar produto:', error);
+    res.status(500).json({ message: 'Erro interno do servidor' });
+  }
+});
+
 // Criar produto
 router.post('/', authenticateToken, requireRole(['SELLER']), async (req, res) => {
   try {
@@ -186,6 +211,26 @@ router.put('/:id', authenticateToken, requireRole(['SELLER']), async (req, res) 
     });
   } catch (error) {
     console.error('Erro ao atualizar produto:', error);
+    res.status(500).json({ message: 'Erro interno do servidor' });
+  }
+});
+
+// Listar produtos do vendedor
+router.get('/seller/products', authenticateToken, requireRole(['SELLER']), async (req, res) => {
+  try {
+    const products = await prisma.product.findMany({
+      where: { sellerId: req.user.id },
+      include: {
+        seller: {
+          select: { name: true }
+        }
+      },
+      orderBy: { publishedAt: 'desc' }
+    });
+
+    res.json({ products });
+  } catch (error) {
+    console.error('Erro ao listar produtos do vendedor:', error);
     res.status(500).json({ message: 'Erro interno do servidor' });
   }
 });
