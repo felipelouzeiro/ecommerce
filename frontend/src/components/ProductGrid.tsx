@@ -3,6 +3,7 @@
 import { useState, useEffect } from 'react'
 import ProductCard from './ProductCard'
 import { useCartStore } from '@/store/cartStore'
+import { API_URL } from '@/config/api'
 
 interface Product {
   id: string
@@ -46,7 +47,7 @@ export default function ProductGrid({ searchTerm, filters }: ProductGridProps) {
         ...(filters.maxPrice && { maxPrice: filters.maxPrice.toString() })
       })
 
-      const response = await fetch(`${process.env.NEXT_PUBLIC_API_URL || 'http://localhost:3001'}/api/products?${params}`)
+      const response = await fetch(`${API_URL}/api/products?${params}`)
       const data = await response.json()
 
       if (response.ok) {
