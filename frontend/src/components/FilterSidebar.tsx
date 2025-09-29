@@ -14,9 +14,7 @@ export default function FilterSidebar({ filters, setFilters }: FilterSidebarProp
   const [localFilters, setLocalFilters] = useState(filters)
 
   const formatCurrency = (value: string) => {
-    // Remove tudo que não é número
     const numbers = value.replace(/\D/g, '')
-    // Converte para centavos e formata
     const amount = parseInt(numbers) / 100
     return new Intl.NumberFormat('pt-BR', {
       style: 'currency',
@@ -25,8 +23,8 @@ export default function FilterSidebar({ filters, setFilters }: FilterSidebarProp
   }
 
   const parseCurrency = (value: string) => {
-    // Remove formatação e retorna apenas números
-    return value.replace(/\D/g, '')
+    const numbers = value.replace(/\D/g, '')
+    return numbers ? (parseInt(numbers) / 100).toString() : ''
   }
 
   const handleFilterChange = (key: string, value: string) => {
@@ -36,7 +34,10 @@ export default function FilterSidebar({ filters, setFilters }: FilterSidebarProp
       [key]: numericValue
     }
     setLocalFilters(newFilters)
-    setFilters(newFilters)
+  }
+
+  const applyFilters = () => {
+    setFilters(localFilters)
   }
 
   const clearFilters = () => {
@@ -92,6 +93,15 @@ export default function FilterSidebar({ filters, setFilters }: FilterSidebarProp
               className="w-full pl-8 pr-3 py-3 border border-gray-200 rounded-lg focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500 transition-colors text-sm"
             />
           </div>
+        </div>
+        
+        <div className="pt-4 border-t border-gray-200">
+          <button
+            onClick={applyFilters}
+            className="w-full bg-indigo-600 text-white px-4 py-2 rounded-lg hover:bg-indigo-700 transition-colors font-medium"
+          >
+            Filtrar
+          </button>
         </div>
       </div>
     </div>

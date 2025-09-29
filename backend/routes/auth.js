@@ -6,12 +6,10 @@ const { PrismaClient } = require('@prisma/client');
 const router = express.Router();
 const prisma = new PrismaClient();
 
-// Registro de usuário
 router.post('/register', async (req, res) => {
   try {
     const { email, password, name, role } = req.body;
 
-    // Validações básicas
     if (!email || !password || !name || !role) {
       return res.status(400).json({ message: 'Todos os campos são obrigatórios' });
     }

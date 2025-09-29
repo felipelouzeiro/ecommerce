@@ -1,7 +1,9 @@
 'use client'
 
 import { useState } from 'react'
+import { useRouter } from 'next/navigation'
 import { useAuthStore } from '@/store/authStore'
+import { useFavoritesStore } from '@/store/favoritesStore'
 
 interface Product {
   id: string
@@ -20,12 +22,13 @@ interface ProductCardProps {
 }
 
 export default function ProductCard({ product, onAddToCart }: ProductCardProps) {
-  const [isFavorite, setIsFavorite] = useState(false)
   const { user } = useAuthStore()
+  const { isFavorite, toggleFavorite } = useFavoritesStore()
+  const router = useRouter()
 
   const handleAddToCart = () => {
     if (!user) {
-      alert('Faça login para adicionar produtos ao carrinho')
+      router.push('/login')
       return
     }
     onAddToCart(product)
@@ -33,10 +36,10 @@ export default function ProductCard({ product, onAddToCart }: ProductCardProps) 
 
   const handleToggleFavorite = () => {
     if (!user) {
-      alert('Faça login para favoritar produtos')
+      router.push('/login')
       return
     }
-    setIsFavorite(!isFavorite)
+    toggleFavorite(product)
   }
 
   const formatPrice = (price: number) => {
@@ -59,8 +62,8 @@ export default function ProductCard({ product, onAddToCart }: ProductCardProps) 
           className="absolute top-3 right-3 p-2 bg-white/90 backdrop-blur-sm rounded-full shadow-sm hover:bg-white transition-colors"
         >
           <svg
-            className={`w-5 h-5 ${isFavorite ? 'text-red-500' : 'text-gray-400'} transition-colors`}
-            fill={isFavorite ? 'currentColor' : 'none'}
+            className={`w-5 h-5 ${isFavorite(product.id) ? 'text-red-500' : 'text-gray-400'} transition-colors`}
+            fill={isFavorite(product.id) ? 'currentColor' : 'none'}
             stroke="currentColor"
             viewBox="0 0 24 24"
           >

@@ -2,40 +2,44 @@
 
 import { useState } from 'react'
 import Link from 'next/link'
+import { useRouter } from 'next/navigation'
 import { useAuthStore } from '@/store/authStore'
 import { useCartStore } from '@/store/cartStore'
+import { useFavoritesStore } from '@/store/favoritesStore'
 
 export default function Header() {
   const { user, logout } = useAuthStore()
-  const { items } = useCartStore()
+  const { items, clearCart } = useCartStore()
+  const { favorites, clearFavorites } = useFavoritesStore()
+  const router = useRouter()
   const [isMenuOpen, setIsMenuOpen] = useState(false)
 
   const cartItemsCount = items.reduce((total, item) => total + item.quantity, 0)
+
+  const handleLogout = () => {
+    logout()
+    clearCart()
+    clearFavorites()
+    router.push('/login')
+  }
 
   return (
     <header className="bg-white/95 backdrop-blur-sm shadow-sm border-b border-gray-100 sticky top-0 z-50">
       <div className="container mx-auto px-4">
         <div className="flex items-center justify-between h-16">
-          {/* Logo */}
           <Link href="/" className="text-2xl font-bold text-indigo-600 hover:text-indigo-700 transition-colors">
             Loja Online
           </Link>
-
-          {/* Navegação Desktop */}
           <nav className="hidden md:flex items-center space-x-6">
-            <Link href="/" className="text-gray-700 hover:text-indigo-600 transition-colors">
-              Produtos
-            </Link>
-            
             {user ? (
               <>
                 {user.role === 'SELLER' && (
                   <>
+                    <Link href="/products" className="text-gray-700 hover:text-indigo-600 transition-colors">
+                      Produtos
+                    </Link>
                     <Link href="/dashboard" className="text-gray-700 hover:text-indigo-600 transition-colors">
                       Dashboard
-                    </Link>
-                    <Link href="/products/new" className="text-gray-700 hover:text-indigo-600 transition-colors">
-                      Novo Produto
                     </Link>
                   </>
                 )}
@@ -62,7 +66,7 @@ export default function Header() {
                 <div className="flex items-center space-x-4">
                   <span className="text-gray-700">Olá, {user.name}</span>
                   <button
-                    onClick={logout}
+                    onClick={handleLogout}
                     className="text-gray-700 hover:text-indigo-600 transition-colors"
                   >
                     Sair
@@ -84,7 +88,6 @@ export default function Header() {
             )}
           </nav>
 
-          {/* Menu Mobile */}
           <button
             className="md:hidden"
             onClick={() => setIsMenuOpen(!isMenuOpen)}
@@ -99,43 +102,39 @@ export default function Header() {
         {isMenuOpen && (
           <div className="md:hidden py-4 border-t">
             <nav className="flex flex-col space-y-4">
-              <Link href="/" className="text-gray-700 hover:text-primary-600">
-                Produtos
-              </Link>
-              
               {user ? (
                 <>
                   {user.role === 'SELLER' && (
                     <>
-                      <Link href="/dashboard" className="text-gray-700 hover:text-primary-600">
-                        Dashboard
+                      <Link href="/products" className="text-gray-700 hover:text-indigo-600 transition-colors">
+                        Produtos
                       </Link>
-                      <Link href="/products/new" className="text-gray-700 hover:text-primary-600">
-                        Novo Produto
+                      <Link href="/dashboard" className="text-gray-700 hover:text-indigo-600 transition-colors">
+                        Dashboard
                       </Link>
                     </>
                   )}
                   
                   {user.role === 'CLIENT' && (
                     <>
-                      <Link href="/favorites" className="text-gray-700 hover:text-primary-600">
+                      <Link href="/favorites" className="text-gray-700 hover:text-indigo-600 transition-colors">
                         Favoritos
                       </Link>
-                      <Link href="/orders" className="text-gray-700 hover:text-primary-600">
+                      <Link href="/orders" className="text-gray-700 hover:text-indigo-600 transition-colors">
                         Pedidos
+                      </Link>
+                      <Link href="/cart" className="text-gray-700 hover:text-indigo-600 transition-colors">
+                        Carrinho ({cartItemsCount})
                       </Link>
                     </>
                   )}
 
-                  <Link href="/cart" className="text-gray-700 hover:text-primary-600">
-                    Carrinho ({cartItemsCount})
-                  </Link>
 
                   <div className="pt-4 border-t">
                     <span className="text-gray-700">Olá, {user.name}</span>
                     <button
-                      onClick={logout}
-                      className="block mt-2 text-gray-700 hover:text-primary-600"
+                      onClick={handleLogout}
+                      className="block mt-2 text-gray-700 hover:text-indigo-600 transition-colors"
                     >
                       Sair
                     </button>

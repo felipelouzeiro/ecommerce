@@ -12,6 +12,23 @@ interface CartItem {
   quantity: number
 }
 
+// Função para obter a chave de armazenamento baseada no usuário
+const getCartStorageKey = () => {
+  if (typeof window === 'undefined') return 'cart-storage'
+  
+  const authStorage = localStorage.getItem('auth-storage')
+  if (authStorage) {
+    try {
+      const parsed = JSON.parse(authStorage)
+      const userId = parsed.state?.user?.id
+      return userId ? `cart-storage-${userId}` : 'cart-storage'
+    } catch {
+      return 'cart-storage'
+    }
+  }
+  return 'cart-storage'
+}
+
 interface CartState {
   items: CartItem[]
   addItem: (product: any, quantity?: number) => void
@@ -87,7 +104,7 @@ export const useCartStore = create<CartState>()(
       }
     }),
     {
-      name: 'cart-storage',
+      name: getCartStorageKey(),
     }
   )
 )

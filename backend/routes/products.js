@@ -8,10 +8,7 @@ const { authenticateToken, requireRole } = require('../middleware/auth');
 const router = express.Router();
 const prisma = new PrismaClient();
 
-// Configuração do multer para upload
 const upload = multer({ dest: 'uploads/' });
-
-// Listar produtos (com paginação e filtros)
 router.get('/', async (req, res) => {
   try {
     const { page = 1, limit = 10, search = '', minPrice, maxPrice } = req.query;
@@ -65,7 +62,6 @@ router.get('/', async (req, res) => {
   }
 });
 
-// Buscar produto por ID
 router.get('/:id', async (req, res) => {
   try {
     const { id } = req.params;
@@ -90,7 +86,6 @@ router.get('/:id', async (req, res) => {
   }
 });
 
-// Criar produto
 router.post('/', authenticateToken, requireRole(['SELLER']), async (req, res) => {
   try {
     const { name, price, description, imageUrl } = req.body;
@@ -124,7 +119,6 @@ router.post('/', authenticateToken, requireRole(['SELLER']), async (req, res) =>
   }
 });
 
-// Upload CSV
 router.post('/upload-csv', authenticateToken, requireRole(['SELLER']), upload.single('csv'), async (req, res) => {
   try {
     if (!req.file) {
@@ -134,7 +128,6 @@ router.post('/upload-csv', authenticateToken, requireRole(['SELLER']), upload.si
     const products = [];
     const errors = [];
 
-    // Processar CSV
     await new Promise((resolve, reject) => {
       fs.createReadStream(req.file.path)
         .pipe(csv())
@@ -162,12 +155,10 @@ router.post('/upload-csv', authenticateToken, requireRole(['SELLER']), upload.si
       return res.status(400).json({ message: 'Nenhum produto válido encontrado no CSV' });
     }
 
-    // Inserir produtos em lote
     const createdProducts = await prisma.product.createMany({
       data: products
     });
 
-    // Limpar arquivo temporário
     fs.unlinkSync(req.file.path);
 
     res.json({
@@ -180,13 +171,11 @@ router.post('/upload-csv', authenticateToken, requireRole(['SELLER']), upload.si
   }
 });
 
-// Atualizar produto
 router.put('/:id', authenticateToken, requireRole(['SELLER']), async (req, res) => {
   try {
     const { id } = req.params;
     const { name, price, description, imageUrl } = req.body;
 
-    // Verificar se o produto pertence ao vendedor
     const existingProduct = await prisma.product.findFirst({
       where: { id, sellerId: req.user.id }
     });
@@ -215,7 +204,6 @@ router.put('/:id', authenticateToken, requireRole(['SELLER']), async (req, res) 
   }
 });
 
-// Listar produtos do vendedor
 router.get('/seller/products', authenticateToken, requireRole(['SELLER']), async (req, res) => {
   try {
     const products = await prisma.product.findMany({
@@ -235,12 +223,10 @@ router.get('/seller/products', authenticateToken, requireRole(['SELLER']), async
   }
 });
 
-// Deletar produto
 router.delete('/:id', authenticateToken, requireRole(['SELLER']), async (req, res) => {
   try {
     const { id } = req.params;
 
-    // Verificar se o produto pertence ao vendedor
     const existingProduct = await prisma.product.findFirst({
       where: { id, sellerId: req.user.id }
     });

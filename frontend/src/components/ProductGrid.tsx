@@ -42,11 +42,11 @@ export default function ProductGrid({ searchTerm, filters }: ProductGridProps) {
         page: page.toString(),
         limit: pagination.limit.toString(),
         search: searchTerm,
-        ...(filters.minPrice && { minPrice: filters.minPrice }),
-        ...(filters.maxPrice && { maxPrice: filters.maxPrice })
+        ...(filters.minPrice && { minPrice: filters.minPrice.toString() }),
+        ...(filters.maxPrice && { maxPrice: filters.maxPrice.toString() })
       })
 
-      const response = await fetch(`http://localhost:3001/api/products?${params}`)
+      const response = await fetch(`${process.env.NEXT_PUBLIC_API_URL || 'http://localhost:3001'}/api/products?${params}`)
       const data = await response.json()
 
       if (response.ok) {

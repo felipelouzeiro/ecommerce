@@ -1,6 +1,8 @@
 'use client'
 
-import { useState } from 'react'
+import { useState, useEffect } from 'react'
+import { useRouter } from 'next/navigation'
+import { useAuthStore } from '@/store/authStore'
 import Header from '@/components/Header'
 import ProductGrid from '@/components/ProductGrid'
 import SearchBar from '@/components/SearchBar'
@@ -12,6 +14,20 @@ export default function Home() {
     minPrice: '',
     maxPrice: ''
   })
+  const { user } = useAuthStore()
+  const router = useRouter()
+
+  useEffect(() => {
+    // Se for vendedor, redirecionar para página de produtos
+    if (user && user.role === 'SELLER') {
+      router.push('/products')
+    }
+  }, [user, router])
+
+  // Se for vendedor, não renderizar nada (será redirecionado)
+  if (user && user.role === 'SELLER') {
+    return null
+  }
 
   return (
     <div className="min-h-screen bg-gradient-to-br from-gray-50 to-blue-50">

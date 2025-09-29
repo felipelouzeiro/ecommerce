@@ -4,6 +4,7 @@ import { useState, useEffect } from 'react'
 import { useAuthStore } from '@/store/authStore'
 import { useRouter } from 'next/navigation'
 import toast from 'react-hot-toast'
+import Header from '@/components/Header'
 
 interface Product {
   id: string
@@ -33,7 +34,7 @@ export default function ProductsPage() {
 
   const fetchProducts = async () => {
     try {
-      const response = await fetch('http://localhost:3001/api/products', {
+      const response = await fetch('http://localhost:3001/api/products/seller/products', {
         headers: {
           'Authorization': `Bearer ${localStorage.getItem('auth-storage') ? JSON.parse(localStorage.getItem('auth-storage')!).state.token : ''}`
         }
@@ -82,6 +83,7 @@ export default function ProductsPage() {
 
   return (
     <div className="min-h-screen bg-gradient-to-br from-gray-50 to-blue-50">
+      <Header />
       <div className="container mx-auto px-4 py-8">
         <div className="flex items-center justify-between mb-8">
           <div>
@@ -92,12 +94,20 @@ export default function ProductsPage() {
               Gerencie seus produtos e acompanhe as vendas
             </p>
           </div>
-          <button
-            onClick={() => router.push('/products/new')}
-            className="bg-indigo-600 text-white px-6 py-3 rounded-lg hover:bg-indigo-700 transition-colors font-medium"
-          >
-            + Novo Produto
-          </button>
+          <div className="flex space-x-3">
+            <button
+              onClick={() => router.push('/products/new')}
+              className="bg-indigo-600 text-white px-6 py-3 rounded-lg hover:bg-indigo-700 transition-colors font-medium"
+            >
+              + Novo Produto
+            </button>
+            <button
+              onClick={() => router.push('/products/upload')}
+              className="bg-green-600 text-white px-6 py-3 rounded-lg hover:bg-green-700 transition-colors font-medium"
+            >
+              📁 Upload CSV
+            </button>
+          </div>
         </div>
 
         {products.length === 0 ? (

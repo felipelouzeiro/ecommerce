@@ -5,6 +5,7 @@ import { useCartStore } from '@/store/cartStore'
 import { useAuthStore } from '@/store/authStore'
 import { useRouter } from 'next/navigation'
 import toast from 'react-hot-toast'
+import Header from '@/components/Header'
 
 interface CartItem {
   id: string
@@ -28,7 +29,25 @@ export default function CartPage() {
       router.push('/')
       return
     }
+    syncCartWithBackend()
   }, [user, router])
+
+  const syncCartWithBackend = async () => {
+    try {
+      const response = await fetch('http://localhost:3001/api/cart', {
+        headers: {
+          'Authorization': `Bearer ${localStorage.getItem('auth-storage') ? JSON.parse(localStorage.getItem('auth-storage')!).state.token : ''}`
+        }
+      })
+      
+      if (response.ok) {
+        const data = await response.json()
+        console.log('Carrinho do backend:', data)
+      }
+    } catch (error) {
+      console.error('Erro ao sincronizar carrinho:', error)
+    }
+  }
 
   const handleQuantityChange = (productId: string, quantity: number) => {
     if (quantity < 1) {
@@ -39,6 +58,7 @@ export default function CartPage() {
   }
 
   const handleCheckout = async () => {
+    console.log('Itens no carrinho:', items)
     if (items.length === 0) {
       toast.error('Carrinho vazio')
       return
@@ -46,18 +66,26 @@ export default function CartPage() {
 
     setLoading(true)
     try {
+      for (const item of items) {
+        await fetch('http://localhost:3001/api/cart/add', {
+          method: 'POST',
+          headers: {
+            'Content-Type': 'application/json',
+            'Authorization': `Bearer ${localStorage.getItem('auth-storage') ? JSON.parse(localStorage.getItem('auth-storage')!).state.token : ''}`
+          },
+          body: JSON.stringify({
+            productId: item.product.id,
+            quantity: item.quantity
+          })
+        })
+      }
+
       const response = await fetch('http://localhost:3001/api/orders', {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
           'Authorization': `Bearer ${localStorage.getItem('auth-storage') ? JSON.parse(localStorage.getItem('auth-storage')!).state.token : ''}`
-        },
-        body: JSON.stringify({
-          items: items.map(item => ({
-            productId: item.product.id,
-            quantity: item.quantity
-          }))
-        })
+        }
       })
 
       if (response.ok) {
@@ -112,6 +140,7 @@ export default function CartPage() {
 
   return (
     <div className="min-h-screen bg-gradient-to-br from-gray-50 to-blue-50">
+      <Header />
       <div className="container mx-auto px-4 py-8">
         <div className="mb-8">
           <h1 className="text-3xl font-bold text-gray-900 mb-2">
