@@ -4,7 +4,6 @@ import { useState, useEffect } from 'react'
 import { useAuthStore } from '@/store/authStore'
 import { useRouter } from 'next/navigation'
 import Header from '@/components/Header'
-import { getAuthToken } from '@/utils/storage'
 
 interface DashboardStats {
   totalSold: number
@@ -35,7 +34,7 @@ export default function DashboardPage() {
     try {
       const response = await fetch('http://localhost:3001/api/dashboard/stats', {
         headers: {
-          'Authorization': `Bearer ${getAuthToken()}`
+          'Authorization': `Bearer ${localStorage.getItem('auth-storage') ? JSON.parse(localStorage.getItem('auth-storage')!).state.token : ''}`
         }
       })
       const data = await response.json()
