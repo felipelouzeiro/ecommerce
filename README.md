@@ -126,6 +126,14 @@ npm install
 npm run dev
 ```
 
+O frontend estará disponível em `http://localhost:3000`
+
+#### 🌐 Acesso ao Deploy Online
+
+**Frontend Deploy (Vercel):** [https://ecommerce-rg3w.vercel.app](https://ecommerce-rg3w.vercel.app)
+
+> ⚠️ **Importante:** Para usar o frontend no Vercel, você precisa ter o backend rodando localmente na porta 3001.
+
 ## 📊 Modelo de Dados
 
 ### Entidades Principais
